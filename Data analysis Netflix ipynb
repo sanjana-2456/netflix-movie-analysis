@@ -1,0 +1,498 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "046aa148-58fc-4c28-8957-95f3241f8f2c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "import matplotlib.pyplot as plt\n",
+    "import seaborn as sns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7f6c2cb6-7558-49b0-9d7b-642a1dda758b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df= pd.read_csv('mymoviedb.csv',lineterminator ='\\n')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4b9e688d-29fb-400c-9705-776f47fdb159",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "353e7ad4-85bb-49dc-8b8d-a9a341f1031d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b4d5bc97-2905-4fdb-827b-81d6150a2ef3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Genre'].head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8f1330a0-42b7-4ca6-8a97-13f05c0c8caf",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.duplicated().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "5476ab88-ed0c-411c-aee2-903a080babe9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c2582a08-53e1-4e6b-9eff-ecc6c4beea0f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8c9b3ece-6213-4c7b-af5e-378bb1cfc8e0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Release_Date'] = pd.to_datetime(df['Release_Date'])\n",
+    "print(df['Release_Date'].dtypes)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "864fddc5-aee2-422b-9ce0-bce24a934cd9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Release_Date']=df['Release_Date'].dt.year\n",
+    "df['Release_Date'].dtypes"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f0d433ef-9432-4492-97cc-6590e5b850f1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e05fb9fa-3c62-4971-8f21-3d2e07c9a54d",
+   "metadata": {},
+   "source": [
+    "# Dropping the ccolumns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9d9614de-7855-48cb-ad1c-65a6e3e2bcf4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "cols=['Overview','Original_Language', 'Poster_Url',]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "aca8385c-a7b7-4e05-9ced-168f04767e5e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.drop(cols,axis =1,inplace=True)\n",
+    "df.columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "71cbc157-9ae6-4782-b1f2-e52cd72e3dee",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "eefe3e36-4c83-4a19-b77f-9fda70ff6a28",
+   "metadata": {},
+   "source": [
+    "categorizing Vote_Average column\n",
+    "we would cut the Vote_Average values and make 4 categories: popular average below_avg to describe it using catigorize_col() function provide above."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7d2a668d-5990-4a6f-ac34-c558da60fff1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def catigorize_col(df,col,labels):\n",
+    "    edges= [df[col].describe()['min'],\n",
+    "            df[col].describe()['25%'],\n",
+    "            df[col].describe()['50%'],\n",
+    "            df[col].describe()['75%'],\n",
+    "            df[col].describe()['max']]\n",
+    "    \n",
+    "    df[col]=pd.cut(df[col],edges, labels = labels, duplicates='drop')\n",
+    "    return df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ea3aed4e-3823-4a18-bc19-e861ced97f99",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "labels=['not_popular','below_avg','average','popular']\n",
+    "\n",
+    "catigorize_col(df,'Vote_Average',labels)\n",
+    "\n",
+    "df['Vote_Average'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "99b76c71-28fa-4112-bece-fa83cbb93613",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "07986c41-4aef-4ddc-bf26-36ddec0b8b4d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Vote_Average'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bddbb79f-f503-4114-ae71-e806644e8c77",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.dropna(inplace =True)\n",
+    "\n",
+    "df.isna().sum()\n",
+    "\n",
+    "          "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "051d9444-68c9-4fc9-a888-b434682ed082",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7d827766-1c45-4dde-a0dc-b37d7e3a2b92",
+   "metadata": {},
+   "source": [
+    "we'd split genres into a list then explode our dataframe to have only one genre per row ezch movie"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b0db50c6-ce7e-44b8-87a8-05ea57ca3f19",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Genre'] = df['Genre'].str.split(',')\n",
+    "\n",
+    "df= df.explode('Genre').reset_index(drop=True)\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9cd0532a-94ce-401d-8da7-bb8cb3976e67",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#casting columin into category\n",
+    "df['Genre'] =df['Genre'].astype('category')\n",
+    "\n",
+    "\n",
+    "df['Genre'].dtypes"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b7a2142b-be52-47bd-b147-93d5ec4f09a7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.nunique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "49e6961e-df79-461b-a8a4-020dca2c4732",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7ab9d130-ba8c-4ac1-a4fa-36b965215714",
+   "metadata": {},
+   "source": [
+    "# Data Visualization"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cef3d8a4-371f-414e-a08f-1450f92ddf72",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sns.set_style('whitegrid')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6f3d295e-7abd-425b-a0b1-51008bb294fd",
+   "metadata": {},
+   "source": [
+    "# What is the most frequent genre of movies released on Netflix?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3d90217b-3a6b-48de-bcae-b3de2f703b82",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Genre'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "5e5e9bb3-bccb-43ec-b0bd-affd3f7214d9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sns.catplot(y='Genre',data= df,kind ='count',\n",
+    "            order= df['Genre'].value_counts().index,\n",
+    "            color ='#4287f5')\n",
+    "plt.title('Genre column distribution')\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1d556233-b342-44ee-ad06-27ce69dd6150",
+   "metadata": {},
+   "source": [
+    " # which was the highest votes in vote avg column?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "288e7fda-e86c-49a1-a2d0-c5ecd813e409",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b95a7ea1-2f5d-4b46-9294-5715fef5bd2d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sns.catplot(y = 'Vote_Average', data = df, kind = 'count',\n",
+    "            order = df['Vote_Average'].value_counts().index,\n",
+    "            color = '#4287f5')\n",
+    "plt.title('Vote distribution')\n",
+    "\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "11159270-7276-4154-86d7-43c50a1f481c",
+   "metadata": {},
+   "source": [
+    "# what movie got the highest Popularity? what's its genre? "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2a0bb5ce-dc90-43ad-a908-e895f15e507b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.head(2)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a4ebafd3-f604-45eb-8b4d-a74543a4e3da",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df[df['Popularity'] == df['Popularity'].max()]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "345a309a-8614-4660-b856-9fe86c19bfa9",
+   "metadata": {},
+   "source": [
+    "# what movie the lowest popularity? what's its genre?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "13edf44d-4bc3-4355-b56d-4e2941820d30",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df[df['Popularity'] == df['Popularity'].min()]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "979f1fb6-a105-40fe-93a7-7f5f35a07b09",
+   "metadata": {},
+   "source": [
+    " # which year has the filmmed movies?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4038ab75-eb44-45ae-892d-26616cb7d394",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Release_Date'].hist()\n",
+    "plt.title('ReleaSE Date column distribution')\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a6ad49d3-3a53-4d9c-85d0-abf459b924e4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "conclusion\n",
+    "Q1: What is the most frequent genre of movies released on Netflix?\n",
+    "Drama genre is the most frequent genre in our dataset and has appered more than 14% of the times amoung 19 other genres.\n",
+    "\n",
+    "Q2: which was the highest votes in vote avg column?\n",
+    "ans: We have 25.5% of our dataset with popular vote (6520 rows). Drama again gets the highest popularity among films.\n",
+    "\n",
+    "Q3:What movie got the highest popularity? What's its genre?\n",
+    "\n",
+    "Answer:\n",
+    "Spider-Man: No Way Home has the highest popularity rate in our dataset and it has genres of Action, Adventure, and Science Fiction.\n",
+    "\n",
+    "Q4: What movie got the lowest popularity? What's its genre?\n",
+    "Answer:\n",
+    "The United States, Thread has the lowest popularity rate in our dataset and it has genres of Music, Drama, War, Sci-Fi and History.\n",
+    "\n",
+    "    \n",
+    "Q5:Which year has the most filmed movies?\n",
+    "\n",
+    "Answer:\n",
+    "Year 2020 has the highest filming rate in our dataset.\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
